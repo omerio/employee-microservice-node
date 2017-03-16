@@ -1,0 +1,62 @@
+{
+  "name": "node-microservice",
+  "version": "1.0.0",
+  "description": "An example Node.js microservices",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_ENV=development nodemon .",
+    "test": "NODE_ENV=test mocha --compilers js:babel-core/register './test/setup.js' './app/**/*-spec.js'",
+    "test-ci": "NODE_ENV=test mocha --compilers js:babel-core/register './test/setup.js' './app/**/*-spec.js' --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/test-results.xml",
+    "test-debug": "NODE_ENV=test mocha --debug-brk --compilers js:babel-core/register './test/setup.js' './app/**/*-spec.js'",
+    "coverage": "nyc --report-dir ./coverage --reporter=html --reporter=text --reporter=lcov --reporter=cobertura npm test",
+    "debug": "DEBUG=express* node --inspect index.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omerio/employee-microservice-node.git"
+  },
+  "author": "Omer Dawelbeit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omerio/employee-microservice-node/issues"
+  },
+  "homepage": "https://github.com/omerio/employee-microservice-node#readme",
+  "dependencies": {
+    "boom": "^4.2.0",
+    "hapi": "^16.1.0",
+    "hapi-swagger": "^7.7.0",
+    "inert": "^4.1.0",
+    "lodash": "^4.17.4",
+    "request": "^2.80.0",
+    "vision": "^4.1.1",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-preset-es2015": "^6.22.0",
+    "chai-as-promised": "^6.0.0",
+    "codecov": "^2.0.1",
+    "eslint": "^3.16.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.2",
+    "eslint-plugin-standard": "^2.0.1",
+    "mocha": "^3.2.0",
+    "mocha-junit-reporter": "^1.13.0",
+    "nodemon": "^1.11.0",
+    "nyc": "^10.1.2",
+    "sinon-as-promised": "^4.0.2"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "**/*-spec.js",
+      "test/setup.js"
+    ]
+  }
+}
