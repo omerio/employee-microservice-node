@@ -37,7 +37,7 @@ describe('employee-service', function () {
       let bonus = {
         bonus: 19340.76
       }
-      const requestStub = this.sandbox.stub(request, 'post', function (config, cb) {
+      const requestStub = this.sandbox.stub(request, 'post').callsFake(function (config, cb) {
         expect(config.url).to.be.equal(url)
         cb(null, null, bonus)
       })
