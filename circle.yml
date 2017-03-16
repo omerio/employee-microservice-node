@@ -1,6 +1,11 @@
+machine:
+  node:
+    version: 6
+
 test:
   override:
-    - mocha test --reporter mocha-junit-reporter:
+    - npm run lint
+    - mocha --compilers js:babel-core/register './test/setup.js' './app/**/*-spec.js' --reporter mocha-junit-reporter:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
   post:
