@@ -59,6 +59,21 @@ describe('employee-api', function () {
         done(err)
       })
     })
+
+    it('should return status-code 500 if an error has occurred', function (done) {
+      let stub = this.sandbox.stub(service, 'getAll').returns(Promise.reject('FAILURE'))
+
+      server.inject({
+        method: 'GET',
+        url: '/employee'
+      }).then((response) => {
+        expect(response.statusCode).to.equal(500)
+        expect(stub).to.have.been.calledOnce
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
   })
 
   // get by employee number
@@ -171,6 +186,80 @@ describe('employee-api', function () {
         expect(response.statusCode).to.equal(500)
         expect(stub).to.have.been.calledOnce
         expect(stub).to.have.been.calledWithExactly(JSON.parse(employee))
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+  })
+
+  // edit employee
+  describe('put-handler', function () {
+    it('should return status-code 200 and no content', function (done) {
+      let stub = this.sandbox.stub(service, 'edit').returns(Promise.resolve('SUCCESS'))
+      let employee = JSON.stringify(data[0])
+      server.inject({
+        method: 'PUT',
+        url: `/employee/${employeeNumber}`,
+        payload: employee
+      }).then((response) => {
+        expect(response.payload).to.be.equal('')
+        expect(response.statusCode).to.equal(204)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber, JSON.parse(employee))
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+
+    it('should return status-code 400 if the employee is invalid', function (done) {
+      let employee = Object.assign({}, data[0])
+      employee.email = 'testing'
+      server.inject({
+        method: 'PUT',
+        url: `/employee/${employeeNumber}`,
+        payload: employee
+      }).then((response) => {
+        expect(response.statusCode).to.equal(400)
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+
+    it('should return status-code 404 if no employee is found', function (done) {
+      let stub = this.sandbox.stub(service, 'edit').callsFake(function (num, empl) {
+        return Promise.reject('NOT_FOUND')
+      })
+      let employee = JSON.stringify(data[0])
+      server.inject({
+        method: 'PUT',
+        url: `/employee/${employeeNumber}`,
+        payload: employee
+      }).then((response) => {
+        expect(response.statusCode).to.equal(404)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber, JSON.parse(employee))
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+
+    it('should return status-code 500 if backend throws error', function (done) {
+      let stub = this.sandbox.stub(service, 'edit').callsFake(function (num, empl) {
+        return Promise.reject('FATAL')
+      })
+      let employee = JSON.stringify(data[0])
+      server.inject({
+        method: 'PUT',
+        url: `/employee/${employeeNumber}`,
+        payload: employee
+      }).then((response) => {
+        expect(response.statusCode).to.equal(500)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber, JSON.parse(employee))
         done()
       }).catch((err) => {
         done(err)

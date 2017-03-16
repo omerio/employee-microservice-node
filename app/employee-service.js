@@ -5,7 +5,7 @@ const Employee = require('./employee-model')
 
 // TODO read data from database
 // we use static data for now
-const data = [new Employee({
+let data = [new Employee({
   employeeNumber: 19657899,
   firstname: 'John',
   lastname: 'Smith',
@@ -65,7 +65,7 @@ const service = {
             reject(error)
           } else {
             // add bonus to employee
-            Object.assign(employee, body)
+            employee = Object.assign(body, employee)
             resolve(employee)
           }
         })
@@ -132,6 +132,15 @@ const service = {
       data.splice(data.indexOf(dbEmployee), 1)
       resolve('SUCCESS')
     })
+  },
+  /**
+   * used for unit testing
+   */
+  setData (newData) {
+    data = newData
+  },
+  getData () {
+    return data
   }
 }
 

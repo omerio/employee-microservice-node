@@ -29,10 +29,23 @@ describe('employee-service', function () {
         done()
       }).catch((err) => done(err))
     })
+
+    it('should return an error if no employees are found', function (done) {
+      let original = service.getData()
+      service.setData(null)
+      service.getAll().then((employees) => {
+        done('unexpected employees returned')
+      }).catch((err) => {
+        expect(err).to.be.equal('NOT_FOUND')
+        // restore
+        service.setData(original)
+        done()
+      })
+    })
   })
 
   describe('#get(employeeNumber)', function () {
-    it('should return an employee', function (done) {
+    it('should return an employee if employee number exists', function (done) {
       let url = config.bonus.url
       let bonus = {
         bonus: 19340.76
@@ -52,6 +65,46 @@ describe('employee-service', function () {
         done()
       }).catch((err) => done(err))
     })
+
+    it('should return an employee if employee number exists and bonus service disabled', function (done) {
+      config.bonus.enabled = false
+
+      service.get(employeeNumber).then((employee) => {
+        logger.log('test', JSON.stringify(employee))
+        expect(employee).to.not.be.a('null')
+        expect(employee).to.be.an('object')
+        expect(employee).to.have.any.keys('bonus')
+        expect(employee.bonus).to.be.equal(0)
+        config.bonus.enabled = true
+        done()
+      }).catch((err) => done(err))
+    })
+
+    it('should return an error if employee number does not exist', function (done) {
+      service.get(88888888).then((employee) => {
+        done('unexpected employee returned')
+      }).catch((err) => {
+        expect(err).to.be.equal('NOT_FOUND')
+        done()
+      })
+    })
+
+    it('should return an error if bonus service returns an error', function (done) {
+      let url = config.bonus.url
+      let msg = 'Bonus service failed'
+      const requestStub = this.sandbox.stub(request, 'post').callsFake(function (config, cb) {
+        expect(config.url).to.be.equal(url)
+        cb(msg, null, null)
+      })
+
+      service.get(employeeNumber).then((employee) => {
+        done('unexpected employee returned')
+      }).catch((err) => {
+        expect(requestStub).to.be.calledWith()
+        expect(err).to.be.equal(msg)
+        done()
+      })
+    })
   })
 
   describe('#add()', function () {
@@ -60,6 +113,16 @@ describe('employee-service', function () {
       employee.firstname = null
       let result = service.add(employee)
       return expect(result).to.be.rejectedWith('INVALID')
+    })
+
+    it('should fail if no employee storage is found', function () {
+      let original = service.getData()
+      service.setData(null)
+      let employee = Object.assign({ }, data)
+      let result = service.add(employee)
+      // restore
+      service.setData(original)
+      return expect(result).to.be.rejectedWith('FAILURE')
     })
 
     it('should successfully add a valid employee object', function (done) {

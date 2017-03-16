@@ -57,4 +57,12 @@ describe('Employee', function () {
       expect(employee.valid()).to.be.true
     })
   })
+
+  describe('#schema()', function () {
+    it('should return a schema objects', function () {
+      let schema = Employee.schema()
+      expect(schema).to.not.be.a('null')
+      expect(schema).to.be.an('object')
+    })
+  })
 })

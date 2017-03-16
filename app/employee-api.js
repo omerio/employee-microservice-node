@@ -97,7 +97,6 @@ const post = {
         responses: {
           200: {
             description: 'Success',
-            // TODO return an array of Employees
             schema: joi.object(Employee.schema()).label('Employee')
           },
           400: {description: 'Bad request'},
@@ -136,6 +135,7 @@ const put = {
         responses: {
           204: { description: 'Success' },
           400: { description: 'Bad request' },
+          404: {description: 'Employee does not exist'},
           500: { description: 'Internal Error' }
         }
       }
@@ -156,7 +156,11 @@ const put = {
     result.then((response) => {
       return reply().code(204)
     }).catch((err) => {
-      return reply(new Error(err))
+      if (err === 'NOT_FOUND') {
+        return reply(Boom.notFound())
+      } else {
+        return reply(new Error(err))
+      }
     })
   }
 }
