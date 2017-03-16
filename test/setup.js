@@ -6,7 +6,7 @@ const sinonChai = require('sinon-chai')
 const chaiAsPromised = require('chai-as-promised')
 const logger = require('../logger')
 const config = require('../config')
-require('sinon-as-promised') // http://clarkdave.net/2016/09/node-v6-6-and-asynchronously-handled-promise-rejections/
+// require('sinon-as-promised') // http://clarkdave.net/2016/09/node-v6-6-and-asynchronously-handled-promise-rejections/
 
 config.bonus.enabled = true
 
