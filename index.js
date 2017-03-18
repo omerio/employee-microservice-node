@@ -2,6 +2,7 @@ const hapi = require('hapi')
 const swagger = require('hapi-swagger')
 const inert = require('inert')
 const vision = require('vision')
+const good = require('good')
 
 const config = require('./config')
 const logger = require('./logger')
@@ -37,6 +38,19 @@ server.register([
   vision, {
     register: swagger,
     options: swaggerOptions
+  }, {
+    register: good,
+    options: {
+      reporters: {
+        consoleReporter: [{
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ log: '*', response: '*', error: '*' }]
+        }, {
+          module: 'good-console'
+        }, 'stdout']
+      }
+    }
   }
 ], (err) => {
   if (err) throw err

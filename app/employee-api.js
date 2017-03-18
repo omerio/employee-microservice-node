@@ -176,7 +176,7 @@ const del = {
       // Swagger model definition
       'hapi-swagger': {
         responses: {
-          201: { description: 'Success' },
+          204: { description: 'Success' },
           404: { description: 'Employee does not exist' },
           500: { description: 'Internal Error' }
         }
@@ -192,7 +192,7 @@ const del = {
     let result = service.del(request.params.employeeNumber)
     // return reply() is best practice https://github.com/hapijs/hapi/issues/2168
     result.then((response) => {
-      return reply(response)
+      return reply().code(204)
     }).catch((err) => {
       switch (err) {
         case 'NOT_FOUND':

@@ -195,7 +195,7 @@ describe('employee-api', function () {
 
   // edit employee
   describe('put-handler', function () {
-    it('should return status-code 200 and no content', function (done) {
+    it('should return status-code 204 and no content', function (done) {
       let stub = this.sandbox.stub(service, 'edit').returns(Promise.resolve('SUCCESS'))
       let employee = JSON.stringify(data[0])
       server.inject({
@@ -260,6 +260,59 @@ describe('employee-api', function () {
         expect(response.statusCode).to.equal(500)
         expect(stub).to.have.been.calledOnce
         expect(stub).to.have.been.calledWithExactly(employeeNumber, JSON.parse(employee))
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+  })
+
+  // delete employee
+  describe('delete-handler', function () {
+    it('should return status-code 204 and no content', function (done) {
+      let stub = this.sandbox.stub(service, 'del').returns(Promise.resolve('SUCCESS'))
+      server.inject({
+        method: 'DELETE',
+        url: `/employee/${employeeNumber}`
+      }).then((response) => {
+        expect(response.payload).to.be.equal('')
+        expect(response.statusCode).to.equal(204)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber)
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+
+    it('should return status-code 404 if no employee is found', function (done) {
+      let stub = this.sandbox.stub(service, 'del').callsFake(function (num, empl) {
+        return Promise.reject('NOT_FOUND')
+      })
+      server.inject({
+        method: 'DELETE',
+        url: `/employee/${employeeNumber}`
+      }).then((response) => {
+        expect(response.statusCode).to.equal(404)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber)
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    })
+
+    it('should return status-code 500 if backend throws error', function (done) {
+      let stub = this.sandbox.stub(service, 'del').callsFake(function (num, empl) {
+        return Promise.reject('FATAL')
+      })
+      server.inject({
+        method: 'DELETE',
+        url: `/employee/${employeeNumber}`
+      }).then((response) => {
+        expect(response.statusCode).to.equal(500)
+        expect(stub).to.have.been.calledOnce
+        expect(stub).to.have.been.calledWithExactly(employeeNumber)
         done()
       }).catch((err) => {
         done(err)

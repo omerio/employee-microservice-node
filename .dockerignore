@@ -30,4 +30,5 @@ build/Release
 node_modules
 
 # Don't all any unit tests
-app/**/*.spec.js
+app/**/*-spec.js
+test
