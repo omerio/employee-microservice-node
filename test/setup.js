@@ -9,6 +9,7 @@ const config = require('../config')
 // require('sinon-as-promised') // http://clarkdave.net/2016/09/node-v6-6-and-asynchronously-handled-promise-rejections/
 
 config.bonus.enabled = true
+config.server.logging.enabled = false
 
 chai.use(chaiAsPromised)
 

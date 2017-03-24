@@ -24,21 +24,26 @@ server.connection({
 routes.register(server)
 
 // swagger configurations
-const swaggerOptions = {
-  info: {
-    title: 'Employee Microservice API Documentation',
-    version: config.api.version
-  },
-  documentationPath: config.api.docs
+const swaggerPlugin = {
+  register: swagger,
+  options: {
+    info: {
+      title: 'Employee Microservice API Documentation',
+      version: config.api.version
+    },
+    documentationPath: config.api.docs
+  }
 }
 
-// register plugins and start the server on the callback if all is good
-server.register([
+const plugins = [
   inert,
-  vision, {
-    register: swagger,
-    options: swaggerOptions
-  }, {
+  vision,
+  swaggerPlugin
+]
+
+// is the server logging enabled?
+if (config.server.logging.enabled) {
+  plugins.push({
     register: good,
     options: {
       reporters: {
@@ -51,8 +56,11 @@ server.register([
         }, 'stdout']
       }
     }
-  }
-], (err) => {
+  })
+}
+
+// register plugins and start the server on the callback if all is good
+server.register(plugins, (err) => {
   if (err) throw err
 
   server.start((startErr) => {
