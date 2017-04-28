@@ -10,7 +10,11 @@ dependencies:
 #    - npm install --dev
 
   pre:
-    - docker build --rm=false -t omerio/employee-microservice-node:$CIRCLE_SHA1 .
+    # see: https://circleci.com/docs/1.0/docker/#caching-docker-layers
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
+    - docker build --rm=false -t omerio/employee-microservice-node .
+    - docker tag omerio/employee-microservice-node omerio/employee-microservice-node:$CIRCLE_SHA1
+    - mkdir -p ~/docker; docker save -o ~/docker/image.tar omerio/employee-microservice-node
 
 test:
   override:
@@ -28,4 +32,5 @@ deployment:
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push omerio/employee-microservice-node:$CIRCLE_SHA1
+      - docker push omerio/employee-microservice-node
       #- ./deploy.sh
