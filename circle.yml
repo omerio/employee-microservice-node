@@ -1,6 +1,16 @@
 machine:
   node:
     version: 6
+  services:
+    - docker
+dependencies:
+  cache_directories:
+    - "~/docker"
+#  override:
+#    - npm install --dev
+
+  pre:
+    - docker build --rm=false -t omerio/employee-microservice-node:$CIRCLE_SHA1 .
 
 test:
   override:
@@ -11,3 +21,11 @@ test:
   post:
     - npm run coverage
     - bash <(curl -s https://codecov.io/bash)
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push omerio/employee-microservice-node:$CIRCLE_SHA1
+      #- ./deploy.sh
