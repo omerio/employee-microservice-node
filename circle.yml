@@ -3,16 +3,16 @@ machine:
     version: 6
   services:
     - docker
-dependencies:
-  cache_directories:
-    - "~/docker"
+#dependencies:
+#  cache_directories:
+#    - "~/docker"
 #  override:
 #    - npm install --dev
 
   pre:
     # see: https://circleci.com/docs/1.0/docker/#caching-docker-layers
     #- if [[ -e ~/docker/image.tar ]]; then echo "Using image cache"; docker load -i ~/docker/image.tar; fi
-    - docker pull omerio/employee-microservice-node:latest
+    #- docker pull omerio/employee-microservice-node:latest
     - docker build --rm=false -t omerio/employee-microservice-node .
     #- mkdir -p ~/docker; docker save -o ~/docker/image.tar omerio/employee-microservice-node
 
