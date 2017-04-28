@@ -3,7 +3,7 @@ machine:
     version: 6
   services:
     - docker
-#dependencies:
+dependencies:
 #  cache_directories:
 #    - "~/docker"
 #  override:
