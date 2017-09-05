@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: employee-microservice
+    visualize: "true"
+  name: employee-microservice
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8000
+  selector:
+    name: employee-microservice
+  sessionAffinity: None
+  type: NodePort
+  # type: LoadBalancer

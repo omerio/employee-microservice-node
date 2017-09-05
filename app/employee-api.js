@@ -3,6 +3,40 @@ const joi = require('joi')
 const Boom = require('boom')
 const service = require('./employee-service')
 const Employee = require('./employee-model')
+const pack = require('../package.json')
+const errors = require('./error-simulator-api')
+
+// health check
+const health = {
+  method: 'GET',
+  path: '/health',
+  config: {
+    tags: ['api'],
+    description: 'Health check API',
+    plugins: {
+      // Swagger model definition
+      'hapi-swagger': {
+        responses: {
+          200: {
+            description: 'Success',
+            schema: joi.object({
+              status: joi.string().description('Microservice status').example('ok'),
+              version: joi.string().description('Microservice version').example('1.0.0')
+            })
+          },
+          400: { description: 'Bad Request' },
+          500: { description: 'Internal Error' }
+        }
+      }
+    }
+  },
+  handler: function (request, reply) {
+    reply({
+      status: 'ok',
+      version: pack.version
+    })
+  }
+}
 
 const get = {
   method: 'GET',
@@ -205,8 +239,14 @@ const del = {
   }
 }
 
+const freeze = errors.freeze
+const crash = errors.crash
+
 module.exports = {
-  routes: [ get, getByEmployeeNumber, post, put, del ],
+  routes: [ health, crash, freeze, get, getByEmployeeNumber, post, put, del ],
+  freeze,
+  crash,
+  health,
   get,
   getByEmployeeNumber,
   post,
